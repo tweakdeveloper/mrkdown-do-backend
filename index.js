@@ -9,6 +9,7 @@ app.get('/', (_req, res) => res.send('howdy!!! 🤠'));
 app.get('/init_auth_flow', (req, res) => {
   if (!req.query.state) {
     res.status(400).send('needs state query parameter');
+    return;
   }
   let authURL = new URL('https://www.tumblr.com/oauth2/authorize');
   authURL.searchParams.append('client_id', process.env.TUMBLR_CLIENT_ID);
