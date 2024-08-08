@@ -15,3 +15,7 @@ but will listen on port 1037 by default.
 The environment variable `TUMBLR_CLIENT_ID` will need to be set to the consumer
 key you get from
 [registering an application with Tumblr](https://www.tumblr.com/oauth/register).
+
+Additionally, the environment variable `TUMBLR_CLIENT_SECRET` will need to be
+set to the consumer secret from the same Tumblr application that was
+registered.
