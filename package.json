@@ -5,6 +5,7 @@
   "description": "A backend for the mrkdown app",
   "main": "index.js",
   "version": "0.0.1",
+  "private": true,
   "repository": {
     "type": "git",
     "url": "github:tweakdeveloper/mrkdown-do-backend"
