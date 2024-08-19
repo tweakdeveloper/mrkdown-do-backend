@@ -4,8 +4,9 @@ import { exit } from 'process';
 
 import express from 'express';
 
-import TumblrClient from './tumblr';
-import utils from './utils';
+import md_to_npf from './md-to-npf.js';
+import TumblrClient from './tumblr.js';
+import utils from './utils.js';
 
 const PORT = utils.getPort();
 
@@ -26,6 +27,7 @@ const tumblr = new TumblrClient(
 
 const app = express();
 app.use(express.json());
+app.use(express.text({ type: 'text/markdown' }));
 
 app.get('/', (_req, res) => res.send('howdy!!! 🤠'));
 
@@ -53,6 +55,15 @@ app.post('/exchange_code', async (req, res) => {
     res
       .status(500)
       .send({ error: true, error_msg: 'tumblr servers returned an error' });
+  }
+});
+
+app.post('/create_post', async (req, res) => {
+  try {
+    res.send(await md_to_npf(req.body as string));
+  } catch (error) {
+    console.error(error);
+    res.status(400).send({ error: true, error_msg: (error as Error).message });
   }
 });
 

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import utils from './utils';
+import utils from './utils.js';
 
 export default class TumblrClient {
   private readonly TUMBLR_CLIENT_ID: string;
