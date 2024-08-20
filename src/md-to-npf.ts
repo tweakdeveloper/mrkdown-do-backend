@@ -9,13 +9,8 @@ const npfify: Plugin<[], MdastRoot, Npf> = function (this) {
   this.compiler = function (tree: MdastRoot): Npf {
     return {
       content: tree.children
-        .map((child) => {
-          switch (child.type) {
-            case 'heading':
-              return parsers.heading(child);
-          }
-        })
-        .filter((content) => typeof content !== 'undefined'),
+        .map(parsers.rootContent)
+        .filter((child) => typeof child !== 'undefined'),
     };
   };
 };

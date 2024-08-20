@@ -16,4 +16,6 @@ const redirectUri = (isMobile: boolean) =>
     ? 'mrkdown://mrkdown.slottedspoon.dev/auth/redirect'
     : 'https://tweakdeveloper.github.io/mrkdown/redirect';
 
-export default { getPort, redirectUri };
+const unicodeLength = (text: string) => [...text].length;
+
+export default { getPort, redirectUri, unicodeLength };

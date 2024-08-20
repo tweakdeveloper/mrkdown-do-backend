@@ -1,4 +1,6 @@
-import { Heading } from 'mdast';
+import { Heading, PhrasingContent, RootContent } from 'mdast';
+
+import utils from './utils.js';
 
 export type Npf = {
   id?: number;
@@ -6,24 +8,79 @@ export type Npf = {
   content: NpfContent[];
 };
 
-type NpfContent = NpfTextContent;
+type NpfContent = NpfHeadingContent | NpfTextContent;
+
+type NpfFormatting = {
+  start: number;
+  end: number;
+  type: 'bold' | 'italic' | 'strikethrough' | 'small';
+};
 
 type NpfTextContent = {
   type: 'text';
-  subtype?: 'heading1' | 'heading2';
   text: string;
+  formatting?: NpfFormatting[];
 };
 
-export const parsers = {
-  heading(heading: Heading): NpfTextContent {
+type NpfHeadingContent = NpfTextContent & {
+  subtype: 'heading1' | 'heading2';
+};
+
+const internalParsers = {
+  heading(heading: Heading): NpfHeadingContent {
     if (heading.depth > 2) {
       throw Error('only heading1 and heading2 supported');
     }
-    return {
+    const [text, formatting] = this.phrasingContentChildren(heading.children);
+    let header: NpfHeadingContent = {
       type: 'text',
       subtype: heading.depth === 1 ? 'heading1' : 'heading2',
-      text: '',
+      text,
     };
+    if (formatting) {
+      header.formatting = formatting;
+    }
+    return header;
+  },
+  phrasingContentChildren(
+    content: PhrasingContent[],
+  ): [string, NpfFormatting[] | undefined] {
+    let text = '';
+    let formatting: NpfFormatting[] = [];
+
+    for (let child of content) {
+      switch (child.type) {
+        case 'text':
+          text += child.value;
+          break;
+        case 'emphasis':
+          const [emText, _] = this.phrasingContentChildren(child.children);
+          const currentTextLength = utils.unicodeLength(text);
+          const emTextLength = utils.unicodeLength(emText);
+          text += emText;
+          formatting.push({
+            start: currentTextLength,
+            end: currentTextLength + emTextLength,
+            type: 'italic',
+          });
+          break;
+      }
+    }
+
+    if (formatting.length !== 0) {
+      return [text, formatting];
+    } else {
+      return [text, undefined];
+    }
+  },
+};
+
+export const parsers = {
+  rootContent(child: RootContent): NpfContent | undefined {
+    switch (child.type) {
+      case 'heading':
+        return internalParsers.heading(child);
+    }
   },
 };
 
