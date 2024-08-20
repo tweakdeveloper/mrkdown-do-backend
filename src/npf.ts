@@ -54,15 +54,30 @@ const internalParsers = {
           text += child.value;
           break;
         case 'emphasis':
-          const [emText, _] = this.phrasingContentChildren(child.children);
-          const currentTextLength = utils.unicodeLength(text);
-          const emTextLength = utils.unicodeLength(emText);
-          text += emText;
-          formatting.push({
-            start: currentTextLength,
-            end: currentTextLength + emTextLength,
-            type: 'italic',
-          });
+          {
+            const [emText, _] = this.phrasingContentChildren(child.children);
+            const currentTextLength = utils.unicodeLength(text);
+            const emTextLength = utils.unicodeLength(emText);
+            text += emText;
+            formatting.push({
+              start: currentTextLength,
+              end: currentTextLength + emTextLength,
+              type: 'italic',
+            });
+          }
+          break;
+        case 'strong':
+          {
+            const [bText, _] = this.phrasingContentChildren(child.children);
+            const currentTextLength = utils.unicodeLength(text);
+            const bTextLength = utils.unicodeLength(bText);
+            text += bText;
+            formatting.push({
+              start: currentTextLength,
+              end: currentTextLength + bTextLength,
+              type: 'bold',
+            });
+          }
           break;
       }
     }
