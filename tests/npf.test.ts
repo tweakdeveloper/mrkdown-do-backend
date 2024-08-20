@@ -5,7 +5,7 @@ import { emphasis, heading, strong, text } from 'mdast-builder';
 
 import { parsers } from '../src/npf.js';
 
-describe('NPF parsers', () => {
+describe('NPF heading parsers', () => {
   test('parses simple heading', () => {
     expect(parsers.rootContent(heading(1, text('howdy')) as Heading)).toEqual({
       type: 'text',
