@@ -134,6 +134,8 @@ export const parsers = {
         return internalParsers.heading(child);
       case 'paragraph':
         return internalParsers.paragraph(child);
+      default:
+        console.log('unimplemented parser: ', child.type);
     }
   },
 };
