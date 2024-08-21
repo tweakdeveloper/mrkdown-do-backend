@@ -1,7 +1,7 @@
 import { describe, expect, test } from '@jest/globals';
 
-import { Heading } from 'mdast';
-import { emphasis, heading, strong, text } from 'mdast-builder';
+import { Heading, Paragraph } from 'mdast';
+import { emphasis, heading, paragraph, strong, text } from 'mdast-builder';
 
 import { parsers } from '../src/npf.js';
 
@@ -103,6 +103,44 @@ describe('NPF heading parsers', () => {
         { start: 0, end: 5, type: 'italic' },
         { start: 10, end: 15, type: 'italic' },
       ],
+    });
+  });
+});
+
+describe('NPF paragraph parsers', () => {
+  test('parses simple paragraph', () => {
+    expect(
+      parsers.rootContent(paragraph(text("it's delicious!!!")) as Paragraph),
+    ).toEqual({ type: 'text', text: "it's delicious!!!" });
+  });
+  test('parses paragraph with emphasis', () => {
+    expect(
+      parsers.rootContent(
+        paragraph([
+          text("it's "),
+          emphasis(text('delicious')),
+          text('!'),
+        ]) as Paragraph,
+      ),
+    ).toEqual({
+      type: 'text',
+      text: "it's delicious!",
+      formatting: [{ start: 5, end: 14, type: 'italic' }],
+    });
+  });
+  test('parses paragraph with strong', () => {
+    expect(
+      parsers.rootContent(
+        paragraph([
+          text("it's "),
+          strong(text('delicious')),
+          text('!'),
+        ]) as Paragraph,
+      ),
+    ).toEqual({
+      type: 'text',
+      text: "it's delicious!",
+      formatting: [{ start: 5, end: 14, type: 'bold' }],
     });
   });
 });

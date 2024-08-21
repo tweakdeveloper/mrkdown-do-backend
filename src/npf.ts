@@ -1,4 +1,4 @@
-import { Heading, PhrasingContent, RootContent } from 'mdast';
+import { Heading, Paragraph, PhrasingContent, RootContent } from 'mdast';
 
 import utils from './utils.js';
 
@@ -41,6 +41,17 @@ const internalParsers = {
       npfHeadingContent.formatting = formatting;
     }
     return npfHeadingContent;
+  },
+  paragraph(paragraph: Paragraph): NpfTextContent {
+    const [text, formatting] = this.phrasingContentChildren(paragraph.children);
+    let npfContent: NpfTextContent = {
+      type: 'text',
+      text,
+    };
+    if (formatting) {
+      npfContent.formatting = formatting;
+    }
+    return npfContent;
   },
   phrasingContentChildren(
     content: PhrasingContent[],
@@ -121,6 +132,8 @@ export const parsers = {
     switch (child.type) {
       case 'heading':
         return internalParsers.heading(child);
+      case 'paragraph':
+        return internalParsers.paragraph(child);
     }
   },
 };
