@@ -8,6 +8,13 @@ export type Npf = {
   content: NpfContent[];
 };
 
+export class NpfError extends Error {
+  constructor(msg: string) {
+    super(`NPF parsing error: ${msg}`);
+    Object.setPrototypeOf(this, NpfError.prototype);
+  }
+}
+
 type NpfContent = NpfHeadingContent | NpfTextContent;
 
 type NpfFormatting = {
@@ -29,7 +36,7 @@ type NpfHeadingContent = NpfTextContent & {
 const internalParsers = {
   heading(heading: Heading): NpfHeadingContent {
     if (heading.depth > 2) {
-      throw Error('only heading1 and heading2 supported');
+      throw new NpfError('only heading1 and heading2 supported');
     }
     const [text, formatting] = this.phrasingContentChildren(heading.children);
     let npfHeadingContent: NpfHeadingContent = {

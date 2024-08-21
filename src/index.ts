@@ -5,6 +5,7 @@ import { exit } from 'process';
 import express from 'express';
 
 import md_to_npf from './md-to-npf.js';
+import { NpfError } from './npf.js';
 import TumblrClient from './tumblr.js';
 import utils from './utils.js';
 
@@ -59,12 +60,43 @@ app.post('/exchange_code', async (req, res) => {
   }
 });
 
-app.post('/create_post', async (req, res) => {
+app.post('/create_post/:blog', async (req, res) => {
+  if (!req.headers.authorization) {
+    res
+      .status(401)
+      .send({ error: true, error_msg: 'needs Authorization header' });
+    return;
+  }
+  let errors: string[] = [];
+  if (req.headers['content-type'] !== 'text/markdown') {
+    errors.push("needs Content-Type header of 'text/markdown'");
+  }
+  if (typeof req.body !== 'string') {
+    errors.push('error parsing body');
+  }
+  if (errors.length !== 0) {
+    res.status(400).send({ error: true, error_msg: errors.join(', ') });
+    return;
+  }
   try {
-    res.send(await md_to_npf(req.body as string));
+    const tumblrResponse = await tumblr.createPost(
+      req.headers.authorization,
+      req.params.blog,
+      await md_to_npf(req.body),
+    );
+    res.status(tumblrResponse.status).send(tumblrResponse.data);
   } catch (error) {
     console.error(error);
-    res.status(400).send({ error: true, error_msg: (error as Error).message });
+    if (error instanceof NpfError) {
+      res.status(400).send({ error: true, error_msg: error.message });
+    } else {
+      res
+        .status(500)
+        .send({
+          error: true,
+          error_msg: `tumblr servers returned an error: ${error}`,
+        });
+    }
   }
 });
 

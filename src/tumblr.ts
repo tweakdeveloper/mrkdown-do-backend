@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+import { type Npf } from './npf.js';
 import utils from './utils.js';
 
 export default class TumblrClient {
@@ -27,6 +28,14 @@ export default class TumblrClient {
     authURL.searchParams.append('state', state);
     authURL.searchParams.append('redirect_uri', utils.redirectUri(mobile));
     return authURL.toString();
+  }
+
+  async createPost(authVal: string, blog: string, content: Npf) {
+    return this.tumblrClient.post(`/blog/${blog}/posts`, content, {
+      headers: {
+        Authorization: authVal,
+      },
+    });
   }
 
   async exchangeToken(code: string, isMobile: boolean) {
