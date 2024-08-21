@@ -52,9 +52,10 @@ app.post('/exchange_code', async (req, res) => {
     res.status(tumblrResponse.status).send(tumblrResponse.data);
   } catch (error) {
     console.error('500 occurred: ', error);
-    res
-      .status(500)
-      .send({ error: true, error_msg: 'tumblr servers returned an error' });
+    res.status(500).send({
+      error: true,
+      error_msg: `tumblr servers returned an error: ${error}`,
+    });
   }
 });
 
