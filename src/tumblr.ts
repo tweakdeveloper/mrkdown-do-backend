@@ -24,7 +24,7 @@ export default class TumblrClient {
     let authURL = new URL('https://www.tumblr.com/oauth2/authorize');
     authURL.searchParams.append('client_id', this.TUMBLR_CLIENT_ID);
     authURL.searchParams.append('response_type', 'code');
-    authURL.searchParams.append('scope', '');
+    authURL.searchParams.append('scope', 'write');
     authURL.searchParams.append('state', state);
     authURL.searchParams.append('redirect_uri', utils.redirectUri(mobile));
     return authURL.toString();
