@@ -45,4 +45,64 @@ describe('NPF heading parsers', () => {
       formatting: [{ start: 6, end: 9, type: 'bold' }],
     });
   });
+  test('parses heading with emphasis and strong', () => {
+    expect(
+      parsers.rootContent(
+        heading(1, [
+          emphasis(text('howdy')),
+          text(' '),
+          strong(text('all')),
+          text(' '),
+          emphasis(text("y'all")),
+        ]) as Heading,
+      ),
+    ).toEqual({
+      type: 'text',
+      text: "howdy all y'all",
+      subtype: 'heading1',
+      formatting: [
+        { start: 0, end: 5, type: 'italic' },
+        { start: 6, end: 9, type: 'bold' },
+        { start: 10, end: 15, type: 'italic' },
+      ],
+    });
+  });
+  test('parses heading with combined formatting', () => {
+    expect(
+      parsers.rootContent(
+        heading(1, [
+          text('howdy '),
+          emphasis(strong(text('all'))),
+          text(" y'all"),
+        ]) as Heading,
+      ),
+    ).toEqual({
+      type: 'text',
+      text: "howdy all y'all",
+      subtype: 'heading1',
+      formatting: [
+        { start: 6, end: 9, type: 'bold' },
+        { start: 6, end: 9, type: 'italic' },
+      ],
+    });
+  });
+  test('parses heading with multiple instances of emphasis', () => {
+    expect(
+      parsers.rootContent(
+        heading(1, [
+          emphasis(text('howdy')),
+          text(' all '),
+          emphasis(text("y'all")),
+        ]) as Heading,
+      ),
+    ).toEqual({
+      type: 'text',
+      text: "howdy all y'all",
+      subtype: 'heading1',
+      formatting: [
+        { start: 0, end: 5, type: 'italic' },
+        { start: 10, end: 15, type: 'italic' },
+      ],
+    });
+  });
 });

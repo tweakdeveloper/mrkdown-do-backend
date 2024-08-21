@@ -55,9 +55,22 @@ const internalParsers = {
           break;
         case 'emphasis':
           {
-            const [emText, _] = this.phrasingContentChildren(child.children);
+            const [emText, emFormatting] = this.phrasingContentChildren(
+              child.children,
+            );
             const currentTextLength = utils.unicodeLength(text);
             const emTextLength = utils.unicodeLength(emText);
+            if (emFormatting) {
+              formatting.push(
+                ...emFormatting.map((fmt) => {
+                  return {
+                    type: fmt.type,
+                    start: currentTextLength + fmt.start,
+                    end: currentTextLength + fmt.end,
+                  };
+                }),
+              );
+            }
             text += emText;
             formatting.push({
               start: currentTextLength,
@@ -68,9 +81,22 @@ const internalParsers = {
           break;
         case 'strong':
           {
-            const [bText, _] = this.phrasingContentChildren(child.children);
+            const [bText, bFormatting] = this.phrasingContentChildren(
+              child.children,
+            );
             const currentTextLength = utils.unicodeLength(text);
             const bTextLength = utils.unicodeLength(bText);
+            if (bFormatting) {
+              formatting.push(
+                ...bFormatting.map((fmt) => {
+                  return {
+                    type: fmt.type,
+                    start: currentTextLength + fmt.start,
+                    end: currentTextLength + fmt.end,
+                  };
+                }),
+              );
+            }
             text += bText;
             formatting.push({
               start: currentTextLength,
