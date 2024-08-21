@@ -32,15 +32,15 @@ const internalParsers = {
       throw Error('only heading1 and heading2 supported');
     }
     const [text, formatting] = this.phrasingContentChildren(heading.children);
-    let header: NpfHeadingContent = {
+    let npfHeadingContent: NpfHeadingContent = {
       type: 'text',
       subtype: heading.depth === 1 ? 'heading1' : 'heading2',
       text,
     };
     if (formatting) {
-      header.formatting = formatting;
+      npfHeadingContent.formatting = formatting;
     }
-    return header;
+    return npfHeadingContent;
   },
   phrasingContentChildren(
     content: PhrasingContent[],
