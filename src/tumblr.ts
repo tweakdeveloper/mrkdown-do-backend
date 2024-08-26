@@ -30,6 +30,14 @@ export default class TumblrClient {
     return authURL.toString();
   }
 
+  async getUserInfo(authVal: string) {
+    return this.tumblrClient.get('/user/info', {
+      headers: {
+        Authorization: authVal,
+      },
+    });
+  }
+
   async createPost(authVal: string, blog: string, content: Npf) {
     return this.tumblrClient.post(`/blog/${blog}/posts`, content, {
       headers: {

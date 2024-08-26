@@ -98,4 +98,15 @@ app.post('/create_post/:blog', async (req, res) => {
   }
 });
 
+app.get('/get_user_info', async (req, res) => {
+  if (!req.headers.authorization) {
+    res
+      .status(401)
+      .send({ error: true, error_msg: 'needs Authorization header' });
+    return;
+  }
+  const tumblrResponse = await tumblr.getUserInfo(req.headers.authorization);
+  res.status(tumblrResponse.status).send(tumblrResponse.data);
+});
+
 app.listen(PORT, () => console.log(`mrkdown-do-backend listening on ${PORT}!`));
